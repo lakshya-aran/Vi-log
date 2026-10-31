@@ -1,6 +1,6 @@
 import {
-  addDoc, collection, deleteDoc, doc, limit, onSnapshot, orderBy, query,
-  serverTimestamp, Timestamp, updateDoc, where,
+  addDoc, collection, collectionGroup, deleteDoc, doc, getDocs, limit, onSnapshot, orderBy, query,
+  serverTimestamp, setDoc, Timestamp, updateDoc, where,
 } from 'firebase/firestore'
 import { db } from './firebase'
 
@@ -66,4 +66,38 @@ function toEntry(d) {
     startedAt: data.startedAt?.toDate() ?? new Date(),
     endedAt: data.endedAt?.toDate() ?? null,
   }
+}
+
+// ---------- Profiles and admin ----------
+
+// Saved so admins can show names next to entries
+export function saveProfile(user, name) {
+  const profile = { email: user.email }
+  const n = name ?? user.displayName
+  if (n) profile.name = n
+  return setDoc(doc(db, 'users', user.uid), profile, { merge: true })
+}
+
+// Admins are the emails listed in firestore.rules. A non-admin gets permission-denied here.
+export async function checkAdmin() {
+  try {
+    await getDocs(query(collection(db, 'users'), limit(1)))
+    return true
+  } catch {
+    return false
+  }
+}
+
+export async function loadAllData() {
+  const [users, entries] = await Promise.all([
+    getDocs(collection(db, 'users')),
+    getDocs(collectionGroup(db, 'entries')),
+  ])
+  const people = {}
+  users.forEach((d) => { people[d.id] = { uid: d.id, name: d.data().name || '', email: d.data().email || '' } })
+  const all = entries.docs.map((d) => ({ ...toEntry(d), uid: d.ref.parent.parent.id }))
+  for (const e of all) {
+    if (!people[e.uid]) people[e.uid] = { uid: e.uid, name: '', email: '' }
+  }
+  return { people, entries: all.sort((a, b) => b.startedAt - a.startedAt) }
 }

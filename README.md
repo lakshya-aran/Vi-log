@@ -12,6 +12,7 @@ Built with React (Vite) and Firebase (Authentication + Firestore). Hosted on Ver
 - Today and this-week totals
 - Weekly timesheet grouped by day, with previous/next week navigation, delete, and CSV export
 - Each employee can only see their own entries (enforced by `firestore.rules`)
+- Team page for admins: everyone's entries by week, per-person totals, who is working now, CSV export. Admins are the emails listed in `isAdmin()` in `firestore.rules`
 
 ## Firebase setup
 

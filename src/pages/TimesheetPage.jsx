@@ -3,8 +3,7 @@ import { deleteEntry, watchEntries } from '../entries'
 import { dayKey, duration, entryMs, formatDay, formatTime, startOfWeek } from '../format'
 import EntryList from '../components/EntryList'
 import ManualEntry from '../components/ManualEntry'
-
-const WEEK = 7 * 24 * 60 * 60 * 1000
+import { WEEK, downloadCsv, shiftWeek as shift } from '../weeks'
 
 export default function TimesheetPage({ user }) {
   const [entries, setEntries] = useState(null)
@@ -20,20 +19,14 @@ export default function TimesheetPage({ user }) {
   const total = inWeek.reduce((s, e) => s + entryMs(e), 0)
   const isThisWeek = weekStart.getTime() === startOfWeek().getTime()
 
-  const shiftWeek = (n) => setWeekStart(startOfWeek(new Date(weekStart.getTime() + n * WEEK + 12 * 3600 * 1000)))
+  const shiftWeek = (n) => setWeekStart(shift(weekStart, n))
 
   function exportCsv() {
-    const esc = (v) => `"${String(v).replace(/"/g, '""')}"`
     const rows = [['Date', 'Start', 'End', 'Hours', 'Project', 'Notes']]
     for (const e of [...inWeek].reverse()) {
       rows.push([dayKey(e.startedAt), formatTime(e.startedAt), formatTime(e.endedAt), (entryMs(e) / 3600000).toFixed(2), e.project, e.notes])
     }
-    const blob = new Blob([rows.map((r) => r.map(esc).join(',')).join('\n')], { type: 'text/csv' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `timesheet-${dayKey(weekStart)}.csv`
-    a.click()
-    URL.revokeObjectURL(a.href)
+    downloadCsv(`timesheet-${dayKey(weekStart)}.csv`, rows)
   }
 
   return (

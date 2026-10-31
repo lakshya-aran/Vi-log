@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { auth } from '../firebase'
+import { saveProfile } from '../entries'
 import { ORG } from '../App'
 
 const messages = {
@@ -30,6 +31,7 @@ export default function AuthPage() {
       if (signup) {
         const cred = await createUserWithEmailAndPassword(auth, email.trim(), password)
         await updateProfile(cred.user, { displayName: name.trim() })
+        await saveProfile(cred.user, name.trim())
         await cred.user.reload()
       } else {
         await signInWithEmailAndPassword(auth, email.trim(), password)

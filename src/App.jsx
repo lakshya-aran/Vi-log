@@ -5,6 +5,8 @@ import { auth, missingConfig } from './firebase'
 import AuthPage from './pages/AuthPage'
 import TimerPage from './pages/TimerPage'
 import TimesheetPage from './pages/TimesheetPage'
+import AdminPage from './pages/AdminPage'
+import { checkAdmin, saveProfile } from './entries'
 
 export const ORG = 'Vicharanashala Lab for Education Design'
 
@@ -28,8 +30,16 @@ function SetupNeeded({ missing }) {
 
 function LoggedApp() {
   const [user, setUser] = useState(undefined)
+  const [adminUid, setAdminUid] = useState(null)
+  const isAdmin = !!user && adminUid === user.uid
 
   useEffect(() => onAuthStateChanged(auth, setUser), [])
+
+  useEffect(() => {
+    if (!user) return
+    saveProfile(user).catch(() => {})
+    checkAdmin().then((ok) => ok && setAdminUid(user.uid))
+  }, [user])
 
   if (user === undefined) return <div className="loading">Loading…</div>
 
@@ -43,6 +53,7 @@ function LoggedApp() {
           <nav>
             <NavLink to="/" end>Timer</NavLink>
             <NavLink to="/timesheet">Timesheet</NavLink>
+            {isAdmin && <NavLink to="/admin">Team</NavLink>}
             <button className="link" onClick={() => signOut(auth)}>Sign out</button>
           </nav>
         )}
@@ -52,6 +63,7 @@ function LoggedApp() {
           <Routes>
             <Route path="/" element={<TimerPage user={user} />} />
             <Route path="/timesheet" element={<TimesheetPage user={user} />} />
+            <Route path="/admin" element={<AdminPage />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         ) : (
