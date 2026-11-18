@@ -1,10 +1,19 @@
 @import "tailwindcss";
 
-/* Tokens come from the Stitch design system "Vi-log Calm" (project "Vi-log (Time-Plan)").
-   Colors are CSS variables so dark mode can swap them without touching markup. */
+/* Tokens come from the Stitch design systems in project "Vi-log (Time-Plan)":
+   Vi-log Calm, Night Focus, Luminous Modular Bento and Chronometer Editorial.
+   Everything is a CSS variable, so <html data-theme="..."> swaps the whole look. */
 @theme {
-  --font-headline: "Manrope", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-headline: var(--f-head);
+  --font-body: var(--f-body);
+  --font-mono: var(--f-mono);
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+  --shadow-sm: var(--sh-sm);
+  --shadow-md: var(--sh-md);
+  --shadow-lg: var(--sh-lg);
 
   --color-primary: var(--c-primary);
   --color-primary-dim: var(--c-primary-dim);
@@ -54,10 +63,18 @@
   --c-surface: #f9f9ff; --c-scl: #ffffff; --c-sc-low: #f1f3ff; --c-sc: #e9edff; --c-sc-high: #e0e8ff; --c-sc-highest: #d8e2ff;
   --c-on-surface: #1e3256; --c-on-surface-variant: #4c5f86; --c-outline: #687ba3; --c-outline-variant: #9fb2dd;
   --c-inverse-surface: #172036; --c-inverse-on-surface: #e9edff;
+  --f-head: "Manrope", system-ui, sans-serif; --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --r-sm: .25rem; --r-md: .375rem; --r-lg: .5rem; --r-xl: .75rem;
+  --sh-sm: 0 1px 2px rgb(20 32 60 / .05), 0 1px 3px rgb(20 32 60 / .04);
+  --sh-md: 0 4px 12px rgb(20 32 60 / .07), 0 1px 3px rgb(20 32 60 / .05);
+  --sh-lg: 0 12px 32px rgb(20 32 60 / .14);
+  --page-bg: var(--c-surface);
   color-scheme: light;
 }
+/* Calm follows the system's light/dark setting */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]), :root[data-theme="calm"] {
     --c-primary: #8fb0ff; --c-primary-dim: #b3c9ff; --c-on-primary: #00296b;
     --c-primary-container: #1d3a73; --c-on-primary-container: #d9e2ff;
     --c-secondary: #5fdc9a; --c-on-secondary: #00391f; --c-secondary-container: #0f4d30;
@@ -68,13 +85,80 @@
     --c-surface: #0f1420; --c-scl: #161d2c; --c-sc-low: #1a2234; --c-sc: #212b40; --c-sc-high: #29344c; --c-sc-highest: #313d57;
     --c-on-surface: #e4eaf8; --c-on-surface-variant: #a6b3d0; --c-outline: #7c8bab; --c-outline-variant: #3c4863;
     --c-inverse-surface: #e4eaf8; --c-inverse-on-surface: #172036;
+    --sh-sm: 0 0 0 1px rgb(255 255 255 / .04); --sh-md: 0 8px 24px rgb(0 0 0 / .35); --sh-lg: 0 16px 40px rgb(0 0 0 / .5);
+    --page-bg: var(--c-surface);
     color-scheme: dark;
   }
 }
 
+/* Stitch design system "Night Focus": dark immersive, neon mint + violet, Space Grotesk */
+:root[data-theme="night"] {
+  --c-primary: #00f5a0; --c-primary-dim: #00e293; --c-on-primary: #003921;
+  --c-primary-container: #0f3a2c; --c-on-primary-container: #cdffde;
+  --c-secondary: #00e293; --c-on-secondary: #003921; --c-secondary-container: #0d3b2a;
+  --c-on-secondary-container: #7dffc4; --c-secondary-fixed: #00f5a0;
+  --c-tertiary: #ff6b81; --c-on-tertiary: #2a0010; --c-tertiary-container: #93000a;
+  --c-amber: #ffc46b; --c-amber-container: #3d2a00; --c-violet: #d0bcff;
+  --c-error-container: #93000a;
+  --c-surface: #0e1321; --c-scl: #161b2a; --c-sc-low: #1a1f2e; --c-sc: #252a39; --c-sc-high: #303444; --c-sc-highest: #3a3f50;
+  --c-on-surface: #dee2f6; --c-on-surface-variant: #b9cbbd; --c-outline: #849588; --c-outline-variant: #3b4a40;
+  --c-inverse-surface: #dee2f6; --c-inverse-on-surface: #2b303f;
+  --f-head: "Space Grotesk", system-ui, sans-serif; --f-body: "Inter", system-ui, sans-serif; --f-mono: "JetBrains Mono", monospace;
+  --r-sm: .25rem; --r-md: .375rem; --r-lg: .5rem; --r-xl: .9rem;
+  --sh-sm: 0 0 0 1px rgb(0 245 160 / .07), 0 6px 24px rgb(0 0 0 / .35);
+  --sh-md: 0 0 0 1px rgb(0 245 160 / .12), 0 0 32px rgb(0 245 160 / .08), 0 12px 32px rgb(0 0 0 / .45);
+  --sh-lg: 0 0 0 1px rgb(0 245 160 / .15), 0 20px 48px rgb(0 0 0 / .6);
+  --page-bg: radial-gradient(1200px 600px at 85% -10%, rgb(87 27 193 / .25), transparent 60%),
+             radial-gradient(900px 500px at -10% 30%, rgb(0 245 160 / .08), transparent 60%), #0e1321;
+  color-scheme: dark;
+}
+
+/* Stitch design system "Luminous Modular Bento": bright, playful, indigo + coral, Plus Jakarta Sans */
+:root[data-theme="bento"] {
+  --c-primary: #4648d4; --c-primary-dim: #2f2ebe; --c-on-primary: #ffffff;
+  --c-primary-container: #e1e0ff; --c-on-primary-container: #2f2ebe;
+  --c-secondary: #00885d; --c-on-secondary: #ffffff; --c-secondary-container: #c4f5dd;
+  --c-on-secondary-container: #005236; --c-secondary-fixed: #6ee7b7;
+  --c-tertiary: #ae2f34; --c-on-tertiary: #ffffff; --c-tertiary-container: #ff6b6b;
+  --c-amber: #c26a00; --c-amber-container: #ffe3b8; --c-violet: #8b5cf6;
+  --c-error-container: #ffdad6;
+  --c-surface: #faf8ff; --c-scl: #ffffff; --c-sc-low: #f2f3ff; --c-sc: #eaedff; --c-sc-high: #e2e7ff; --c-sc-highest: #dae2fd;
+  --c-on-surface: #131b2e; --c-on-surface-variant: #464554; --c-outline: #767586; --c-outline-variant: #c7c4d7;
+  --c-inverse-surface: #283044; --c-inverse-on-surface: #eef0ff;
+  --f-head: "Plus Jakarta Sans", system-ui, sans-serif; --f-body: "Plus Jakarta Sans", system-ui, sans-serif;
+  --r-sm: .5rem; --r-md: .75rem; --r-lg: 1rem; --r-xl: 1.5rem;
+  --sh-sm: 0 2px 6px rgb(70 72 212 / .05), 0 10px 30px rgb(70 72 212 / .07);
+  --sh-md: 0 4px 10px rgb(70 72 212 / .08), 0 18px 40px rgb(70 72 212 / .12);
+  --sh-lg: 0 24px 60px rgb(70 72 212 / .2);
+  --page-bg: radial-gradient(800px 500px at 0% 0%, rgb(255 107 107 / .12), transparent 60%),
+             radial-gradient(900px 600px at 100% 10%, rgb(96 99 238 / .14), transparent 60%),
+             radial-gradient(700px 500px at 50% 100%, rgb(0 136 93 / .10), transparent 60%), #faf8ff;
+  color-scheme: light;
+}
+
+/* Stitch design system "Chronometer Editorial": cream, ink and signal orange, Bodoni Moda + Work Sans */
+:root[data-theme="editorial"] {
+  --c-primary: #ad2b00; --c-primary-dim: #8a2100; --c-on-primary: #ffffff;
+  --c-primary-container: #ffdbd0; --c-on-primary-container: #8a2100;
+  --c-secondary: #1c1c16; --c-on-secondary: #fdf9ef; --c-secondary-container: #e6e2d8;
+  --c-on-secondary-container: #1c1c16; --c-secondary-fixed: #d93900;
+  --c-tertiary: #ba1a1a; --c-on-tertiary: #ffffff; --c-tertiary-container: #ff8a75;
+  --c-amber: #d93900; --c-amber-container: #ffdbd0; --c-violet: #5f5c56;
+  --c-error-container: #ffdad6;
+  --c-surface: #fdf9ef; --c-scl: #fffdf8; --c-sc-low: #f7f3e9; --c-sc: #f2eee4; --c-sc-high: #ece8de; --c-sc-highest: #e6e2d8;
+  --c-on-surface: #1c1c16; --c-on-surface-variant: #5d4038; --c-outline: #926f66; --c-outline-variant: #e7bdb2;
+  --c-inverse-surface: #1c1c16; --c-inverse-on-surface: #fdf9ef;
+  --f-head: "Bodoni Moda", Georgia, serif; --f-body: "Work Sans", system-ui, sans-serif; --f-mono: "JetBrains Mono", monospace;
+  --r-sm: 0; --r-md: 0; --r-lg: 0; --r-xl: 0;
+  --sh-sm: 0 0 0 1px #1c1c16; --sh-md: 0 0 0 1px #1c1c16, 6px 6px 0 #1c1c16; --sh-lg: 0 0 0 1px #1c1c16, 8px 8px 0 #1c1c16;
+  --page-bg: #fdf9ef;
+  color-scheme: light;
+}
+:root[data-theme="editorial"] h1 { letter-spacing: -.03em; font-weight: 800; }
+
 @layer base {
   html, body { margin: 0; padding: 0; }
-  body { @apply bg-surface font-body text-on-surface antialiased; }
+  body { @apply font-body text-on-surface antialiased; background: var(--page-bg); background-attachment: fixed; min-height: 100vh; }
   h1, h2, h3 { @apply font-headline; }
   ::selection { @apply bg-primary-container text-on-primary-container; }
 }

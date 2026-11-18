@@ -11,6 +11,7 @@ import ReportsPage from './pages/ReportsPage'
 import { checkAdmin, saveProfile } from './entries'
 import { ToastProvider } from './components/toast'
 import { Card, Icon } from './components/ui'
+import ThemeSwitcher from './components/ThemeSwitcher'
 
 export const ORG = 'Vicharanashala Lab for Education Design'
 
@@ -76,6 +77,8 @@ function LoggedApp() {
               <span className="text-[11px] font-medium text-on-surface-variant leading-tight mt-0.5 hidden sm:block truncate">{ORG}</span>
             </span>
           </NavLink>
+          <div className="flex items-center gap-1 sm:gap-2">
+          <ThemeSwitcher />
           {user && (
             <div className="flex items-center gap-2 sm:gap-4">
               <nav className="hidden md:flex items-center gap-1">
@@ -93,6 +96,7 @@ function LoggedApp() {
               </button>
             </div>
           )}
+          </div>
         </div>
         {user && menu && (
           <nav className="md:hidden border-t border-outline-variant/30 px-4 py-3 flex flex-col gap-1 animate-fade-up" onClick={() => setMenu(false)}>
