@@ -1,5 +1,5 @@
 import {
-  addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, updateDoc,
+  addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, Timestamp, updateDoc,
 } from 'firebase/firestore'
 import { db } from './firebase'
 import { dayKey, startOfDay } from './format'
@@ -11,10 +11,11 @@ const tasksOf = (uid) => collection(db, 'users', uid, 'tasks')
 export const PRIORITIES = ['high', 'medium', 'low']
 const RANK = { high: 0, medium: 1, low: 2 }
 
+// cb(tasks, error): on failure (e.g. Firestore rules not published yet) cb gets [] plus the error
 export function watchTasks(uid, cb) {
-  return onSnapshot(query(tasksOf(uid), orderBy('createdAt', 'desc')), (snap) => {
-    cb(snap.docs.map(toTask))
-  })
+  return onSnapshot(query(tasksOf(uid), orderBy('createdAt', 'desc')),
+    (snap) => cb(snap.docs.map(toTask), null),
+    (err) => cb([], err))
 }
 
 export function addTask(uid, { title, project = '', due = '', priority = 'medium' }) {
@@ -39,6 +40,15 @@ export function setTaskDone(uid, id, done) {
 
 export function deleteTask(uid, id) {
   return deleteDoc(doc(tasksOf(uid), id))
+}
+
+// Put a just-deleted task back under the same id (used by the Undo toast)
+export function restoreTask(uid, t) {
+  return setDoc(doc(tasksOf(uid), t.id), {
+    title: t.title, project: t.project, due: t.due, priority: t.priority, done: t.done,
+    createdAt: Timestamp.fromDate(t.createdAt),
+    doneAt: t.doneAt ? Timestamp.fromDate(t.doneAt) : null,
+  })
 }
 
 // Open tasks first; then overdue/soonest due date; then priority; then newest

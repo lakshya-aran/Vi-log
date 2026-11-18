@@ -18,7 +18,9 @@ service cloud.firestore {
     match /users/{uid} {
       allow read: if isOwner(uid) || isAdmin();
       allow create, update: if isOwner(uid)
-        && request.resource.data.keys().hasOnly(['name', 'email'])
+        && request.resource.data.keys().hasOnly(['name', 'email', 'dailyGoalMin', 'weeklyGoalMin'])
+        && (!('dailyGoalMin' in request.resource.data) || (request.resource.data.dailyGoalMin is int && request.resource.data.dailyGoalMin >= 0 && request.resource.data.dailyGoalMin <= 1440))
+        && (!('weeklyGoalMin' in request.resource.data) || (request.resource.data.weeklyGoalMin is int && request.resource.data.weeklyGoalMin >= 0 && request.resource.data.weeklyGoalMin <= 10080))
         && request.resource.data.email == request.auth.token.email
         && (!('name' in request.resource.data) || (request.resource.data.name is string && request.resource.data.name.size() <= 100));
     }
