@@ -55,8 +55,27 @@ export function addManualEntry(uid, { project, notes, start, end }) {
   })
 }
 
+export function updateEntry(uid, id, { project, notes, start, end }) {
+  return updateDoc(doc(entriesOf(uid), id), {
+    project: project.trim(),
+    notes: notes.trim(),
+    startedAt: Timestamp.fromDate(start),
+    endedAt: Timestamp.fromDate(end),
+  })
+}
+
 export function deleteEntry(uid, id) {
   return deleteDoc(doc(entriesOf(uid), id))
+}
+
+// Put a just-deleted entry back under the same id (used by the Undo toast)
+export function restoreEntry(uid, e) {
+  return setDoc(doc(entriesOf(uid), e.id), {
+    project: e.project, notes: e.notes, taskId: e.taskId || '',
+    startedAt: Timestamp.fromDate(e.startedAt),
+    endedAt: e.endedAt ? Timestamp.fromDate(e.endedAt) : null,
+    createdAt: serverTimestamp(),
+  })
 }
 
 function toEntry(d) {
@@ -79,6 +98,24 @@ export function saveProfile(user, name) {
   const n = name ?? user.displayName
   if (n) profile.name = n
   return setDoc(doc(db, 'users', user.uid), profile, { merge: true })
+}
+
+export const DEFAULT_GOALS = { dailyGoalMin: 360, weeklyGoalMin: 1920 }
+
+// Profile doc holds the user's daily/weekly hour goals
+export function watchProfile(uid, cb) {
+  return onSnapshot(doc(db, 'users', uid), (snap) => {
+    const d = snap.data() || {}
+    cb({
+      name: d.name || '',
+      dailyGoalMin: d.dailyGoalMin ?? DEFAULT_GOALS.dailyGoalMin,
+      weeklyGoalMin: d.weeklyGoalMin ?? DEFAULT_GOALS.weeklyGoalMin,
+    })
+  }, () => cb({ ...DEFAULT_GOALS, name: '' }))
+}
+
+export function saveGoals(user, { dailyGoalMin, weeklyGoalMin }) {
+  return setDoc(doc(db, 'users', user.uid), { email: user.email, dailyGoalMin, weeklyGoalMin }, { merge: true })
 }
 
 // Admins are the emails listed in firestore.rules. A non-admin gets permission-denied here.
