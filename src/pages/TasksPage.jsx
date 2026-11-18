@@ -113,9 +113,9 @@ export default function TasksPage({ user }) {
         <span className="flex-1" />
         <div className="relative">
           <Icon name="search" className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant" />
-          <input type="search" className={`${field} pl-8 py-2 w-48 bg-surface-container-lowest shadow-sm`} placeholder="Search tasks…" value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search tasks" />
+          <input type="search" className={`${field} pl-10! py-2 w-48! bg-surface-container-lowest shadow-sm`} placeholder="Search tasks…" value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search tasks" />
         </div>
-        <select className={`${field} py-2 w-auto bg-surface-container-lowest shadow-sm`} value={project} onChange={(e) => setProject(e.target.value)} aria-label="Filter by project">
+        <select className={`${field} py-2 w-auto! bg-surface-container-lowest shadow-sm`} value={project} onChange={(e) => setProject(e.target.value)} aria-label="Filter by project">
           <option value="">All projects</option>
           {projects.map((p) => <option key={p}>{p}</option>)}
         </select>
@@ -174,7 +174,7 @@ function AddTask({ uid, projects, onAdded }) {
       <form className="grid grid-cols-2 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1.3fr)_auto_auto_auto] gap-2.5" onSubmit={submit}>
         <div className="relative col-span-2 lg:col-span-1">
           <Icon name="add_task" className="absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant" />
-          <input className={`${field} pl-9`} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="What needs to be done?" aria-label="Task title" required />
+          <input className={`${field} pl-10!`} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="What needs to be done?" aria-label="Task title" required />
         </div>
         <input className={field} value={project} onChange={(e) => setProject(e.target.value)} placeholder="Project" aria-label="Project" list="task-projects" />
         <datalist id="task-projects">{projects.map((p) => <option key={p} value={p} />)}</datalist>
