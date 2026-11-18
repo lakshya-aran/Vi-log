@@ -7,14 +7,12 @@ export default function EntryList({ entries, onDelete, personName }) {
       <ul className="entries">
         {day.entries.map((e) => (
           <li key={e.id} className={onDelete ? '' : 'readonly'}>
-            <div className="when">
-              {formatTime(e.startedAt)} – {formatTime(e.endedAt)}
-              <span className="dur">{duration(entryMs(e))}</span>
-            </div>
+            <span className="dur">{duration(entryMs(e))}</span>
             <div className="what">
               {personName && <strong className="person">{personName(e.uid)}</strong>}
+              <span className="when">{formatTime(e.startedAt)} – {formatTime(e.endedAt)}</span>
               {e.project && <span className="tag">{e.project}</span>}
-              <p>{e.notes}</p>
+              {e.notes && <p>{e.notes}</p>}
             </div>
             {onDelete && (
               <button className="link danger" onClick={() => confirm('Delete this entry?') && onDelete(e.id)}>Delete</button>

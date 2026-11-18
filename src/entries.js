@@ -21,9 +21,11 @@ export function watchEntries(uid, cb, max = 500) {
   })
 }
 
-export function startTimer(uid, project) {
+// taskId links the entry to a task from the Tasks page ('' when started without one)
+export function startTimer(uid, project, taskId = '') {
   return addDoc(entriesOf(uid), {
     project: project.trim(),
+    taskId,
     notes: '',
     startedAt: serverTimestamp(),
     endedAt: null,
@@ -63,6 +65,7 @@ function toEntry(d) {
     id: d.id,
     project: data.project || '',
     notes: data.notes || '',
+    taskId: data.taskId || '',
     startedAt: data.startedAt?.toDate() ?? new Date(),
     endedAt: data.endedAt?.toDate() ?? null,
   }

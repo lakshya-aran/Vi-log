@@ -6,6 +6,8 @@ import AuthPage from './pages/AuthPage'
 import TimerPage from './pages/TimerPage'
 import TimesheetPage from './pages/TimesheetPage'
 import AdminPage from './pages/AdminPage'
+import TasksPage from './pages/TasksPage'
+import ReportsPage from './pages/ReportsPage'
 import { checkAdmin, saveProfile } from './entries'
 
 export const ORG = 'Vicharanashala Lab for Education Design'
@@ -46,23 +48,30 @@ function LoggedApp() {
   return (
     <>
       <header className="topbar">
-        <NavLink className="brand" to="/">
-          <span className="dot" />Time-Plan <small>{ORG}</small>
-        </NavLink>
-        {user && (
-          <nav>
-            <NavLink to="/" end>Timer</NavLink>
-            <NavLink to="/timesheet">Timesheet</NavLink>
-            {isAdmin && <NavLink to="/admin">Team</NavLink>}
-            <button className="link" onClick={() => signOut(auth)}>Sign out</button>
-          </nav>
-        )}
+        <div className="topbar-in">
+          <NavLink className="brand" to="/">
+            <span className="dot" /><span><b>Time-Plan</b><small>{ORG}</small></span>
+          </NavLink>
+          {user && (
+            <nav>
+              <NavLink to="/" end>Timer</NavLink>
+              <NavLink to="/tasks">Tasks</NavLink>
+              <NavLink to="/timesheet">Timesheet</NavLink>
+              <NavLink to="/reports">Reports</NavLink>
+              {isAdmin && <NavLink to="/admin">Team</NavLink>}
+              <span className="sep" />
+              <button className="link quiet" onClick={() => signOut(auth)}>Sign out</button>
+            </nav>
+          )}
+        </div>
       </header>
       <main>
         {user ? (
           <Routes>
             <Route path="/" element={<TimerPage user={user} />} />
+            <Route path="/tasks" element={<TasksPage user={user} />} />
             <Route path="/timesheet" element={<TimesheetPage user={user} />} />
+            <Route path="/reports" element={<ReportsPage user={user} />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
@@ -70,6 +79,7 @@ function LoggedApp() {
           <AuthPage />
         )}
       </main>
+      <footer className="footer">© {ORG}. Calm &amp; focused work.</footer>
     </>
   )
 }
