@@ -28,10 +28,23 @@ service cloud.firestore {
       allow read: if isOwner(uid) || isAdmin();
       allow delete: if isOwner(uid);
       allow create, update: if isOwner(uid)
-        && request.resource.data.keys().hasOnly(['project', 'notes', 'startedAt', 'endedAt', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['project', 'notes', 'taskId', 'startedAt', 'endedAt', 'createdAt'])
         && request.resource.data.project is string && request.resource.data.project.size() <= 200
         && request.resource.data.notes is string && request.resource.data.notes.size() <= 5000
+        && (!('taskId' in request.resource.data) || (request.resource.data.taskId is string && request.resource.data.taskId.size() <= 100))
         && request.resource.data.startedAt is timestamp;
+    }
+
+    // Each employee's own to-do list. Admins don't need to see tasks.
+    match /users/{uid}/tasks/{taskId} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['title', 'project', 'due', 'priority', 'done', 'createdAt', 'doneAt'])
+        && request.resource.data.title is string && request.resource.data.title.size() > 0 && request.resource.data.title.size() <= 300
+        && request.resource.data.project is string && request.resource.data.project.size() <= 200
+        && request.resource.data.due is string && request.resource.data.due.size() <= 10
+        && request.resource.data.priority in ['high', 'medium', 'low']
+        && request.resource.data.done is bool;
     }
 
     // Lets admins load all entries in one query (team view)
